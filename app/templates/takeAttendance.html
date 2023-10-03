@@ -1,0 +1,241 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Attendance demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <style>
+      #box {
+        width: 100%;
+        height: 600px;
+        margin-top: 15px;
+        border-radius: 5rem;
+        border: 5px solid rgb(123, 2, 236);
+        background-color: whitesmoke;
+        overflow: hidden;
+        border-top-left-radius: 1rem;
+        border-bottom-left-radius: 1rem;
+      }
+      body {
+        background-color: blueviolet;
+      } 
+      .listBox {
+        border: 1px solid saddlebrown;
+        height: 480px;
+        margin: 90px 40px 0px 40px;
+        width: 95%;
+        overflow-x: scroll;
+      }
+
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+.main{
+  width: 100%;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("{% static 'images/back.jpg' %}");
+  background-position: center;
+  background-size: cover;
+}
+.profile-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+  border-radius: 25px;
+  padding: 30px;
+  border: 1px solid #ffffff40;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+.image{
+  position: relative;
+  height: 150px;
+  width: 150px;
+}
+.image .profile-pic{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+.data{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 25px;
+}
+.data h2{
+  font-size: 33px;
+  font-weight: 600;
+}
+span{
+  font-size: 18px;
+}
+.info{
+  text-align: center;
+  padding: 0 20px;
+}
+.buttons{
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+.buttons .btn{
+  color: #fff;
+  text-decoration: none;
+  margin: 0 20px;
+  padding: 8px 25px;
+  border-radius: 25px;
+  font-size: 18px;
+  white-space: nowrap;
+  background: linear-gradient(to left, #33ccff 0%, #ff99cc 100%);
+}
+.buttons .btn:hover{
+  box-shadow: inset 0 5px 20px rgba(0,0,0,0.4);
+}
+    </style>
+  </head>
+  <body>
+
+    <!-- Modal  Delete-->
+    <button type="button" id="alertBtn" class="btn btn-primary" data-keyboard="false" data-backdrop="static" data-bs-toggle="modal" data-bs-target="#modal"
+            style="padding-top: 1px; padding-bottom: 1px; margin-left: 10rem; display: none" > o </button>
+    <div class="container box">
+      <div class="row g-0" id="box">
+        <div class="col-7" style="border-right: 5px solid rgb(123, 2, 236); background-color: #eee; margin-left: -1rem;">
+            <section class="h-50" >
+              <div class="container">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                  <div class="col-12" style="padding-right: 0;"> 
+                    <div class="card" style="outline: none; border: none; width: 100%;">
+                      <div class="card-header p-3">
+                        <h5 class="mb-0 font-monospace"><i class="fas fa-tasks me-2"></i>Today Attendance List </h5>
+                      </div>
+                      <div class="card-body" style="position: relative; height: 525px; overflow-y: scroll;">
+                        <table class="table mb-0">
+                          <thead>
+                            <tr>
+                              <th scope="col">Student Name</th>
+                              <th scope="col">Roll Number</th>
+                              <th scope="col">Time</th>
+                            </tr>
+                          </thead>
+                          <tbody id="table-content">
+                          </tbody>
+                        </table> 
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+        </div>
+        <div class="col-5">
+          <div class="row" style="width: 110%">
+            <div class="col-12">
+              <section class="main">
+                <div class="profile-card">
+                  <div class="image">
+                    <img src="{% static 'images/profile.jpg' %}" alt="" class="profile-pic">
+                  </div>
+                  <div class="data">
+                    <h2 id="name">______ ______</h2>
+                    <span id="roll">______ ______</span>
+                  </div> 
+                  <div class="buttons">
+                      <button onclick="open_cam()" id="Startbtn" class="btn">Start</button>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script>
+     function userSetup(data){
+        document.querySelector('.profile-pic').setAttribute('src', `/static/${data['profile_img']}`)
+        document.querySelector('#name').innerHTML = data['userName']
+        document.querySelector('#roll').innerHTML = data['userRoll']
+     }
+     async function open_cam(){
+        let msg = document.querySelector('#Startbtn')
+        msg.innerHTML = "Image Capturing..."
+        msg.setAttribute('disabled', true)
+        const send = await fetch("attendance.html").then(async(res) => await res.json())
+        console.log(send)
+        if(send && send['code']){
+          switch (send['code']) {
+            case 'already':
+                msg.innerHTML = "Already Signed..."
+                userSetup(send['user'])
+                break; 
+            case 'err':
+                msg.innerHTML = "Abort Process..."
+                break; 
+            case 'done':
+                msg.innerHTML = "Sign Successfully"  
+                userSetup(send['user'])
+                await open_list() 
+                break; 
+          }
+        }
+        setTimeout(()=>{ 
+          msg.innerHTML = "Next";
+          msg.removeAttribute('disabled')
+        }, 3000) 
+      }
+     async function open_list(){
+        const send = await fetch("./todayList.html")
+        const data = await send.json()
+        let table = document.querySelector('#table-content')
+        table.innerHTML = ""
+        if( data.lenght != 0){
+          data['results'].forEach((e)=>{
+              let tr = table_row(e.name, e.roll_number, ((e.time).split('.')[0]), e.profile_img)
+              table.innerHTML += tr
+            })
+          }
+      }
+
+      function table_row(name, roll, time, img){
+        let tr = `<tr class='fw-normal'>` +
+                   `<th>` +
+                     `<img src='/static/${img}' class='shadow-1-strong rounded-circle' alt='avatar 1' style='width: 55px; height: auto;'>` +
+                     `<span class='ms-2'>${name}</span>` +
+                   `</th>` +
+                   `<td class='align-middle'>` +
+                     `<span>${roll}</span>` +
+                   `</td>` +
+                   `<td class='align-middle'>` +
+                     `<h6 class='mb-0'>` +
+                     `<span class='text'>${time}</span>` +
+                     `</h6>` +
+                   `</td>` +
+                   `</tr>`
+        return tr;
+      }
+     open_list()
+
+     let alertBtn = document.querySelector('#alertBtn')
+     // let status = "{{holiday}}"
+     // if(status == "True"){
+     // document.querySelector('.box').style.display = "none"
+     // alertBtn.click()
+     // }
+    </script>
+</html>

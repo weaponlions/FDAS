@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Form-v6 by Colorlib</title>
+	<!-- Mobile Specific Metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<!-- Font-->
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'css/nunito-font.css' %}">-->
+	<!-- Main Style Css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+	<style>
+		.toast {
+			color: cornflowerblue;
+			margin-top: -45px;
+			padding: auto;
+			display: flex;
+			justify-content: center;
+			animation: anim 1s;
+			animation-iteration-count: infinite;
+			opacity: 0;
+		} 
+		@keyframes anim {
+			from{ opacity: 0; } 
+			to{ opacity: 1; }
+		}
+	</style>
+</head>
+<body class="form-v6">
+	<div class="page-content">
+		<div class="form-v6-content">
+			<div class="form-left">
+				<img src="{% static 'images/form.jpg' %}" alt="form" width='484' height='450'>
+			</div>
+			<form class="form-detail" method="post" target="_self">
+				{% csrf_token %}
+				<h2>Register Form</h2>
+				<div class="form-row">
+					<input type="text" name="userName" id="userName" class="input-text" placeholder="Student Name" required>
+				</div>
+				<div class="form-row">
+					<input type="number" name="userRoll" id="userRoll" class="input-text" placeholder="Roll Number" required>
+				</div> 
+				<div class="form-row-last">
+					<input type="submit" name="register" class="register" value="Register">
+				</div>
+				<div class="toast">
+					<span id="msg"> </span>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+<script>
+	let form = document.querySelector('form')
+	let msg = document.querySelector('#msg') 
+	let name = document.querySelector('#userName')
+	let roll = document.querySelector('#userRoll')
+
+	form.addEventListener('submit',
+	async (e) => {
+		e.preventDefault();
+		msg.innerHTML = "Data Sending..." 
+		let url = `http://127.0.0.1:8000/app/registerformData.html?userName=${name.value}&userRoll=${roll.value}`
+		const send = await fetch(url, {method: "GET"}).then(async(res) => await res.json()) 
+		if(send && send['code']){
+			if (send['code'] == 'already') {
+				msg.innerHTML = "User Already Register..."
+			}
+			else if (send['code'] == 'parameter_error') {
+				msg.innerHTML = "Input Value Error..."
+			}
+			else if (send['code'] == 'done') {
+				msg.innerHTML = "Data Submit Successfully"
+				name.value = ""
+				roll.value = "" 
+			}
+		}else{
+			msg.innerHTML = "Server Error..."
+		}
+		setTimeout(()=>{ msg.innerHTML = ""}, 3000)
+	})
+  
+</script>
+</html>
